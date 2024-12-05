@@ -1,4 +1,7 @@
-import { setCalculationListeners } from "./modules/calculateDays/calculateDays";
+import {
+    setCalculationListeners,
+    setQuickDateCheckListeners,
+} from "./modules/calculateDays/calculateDays";
 import currentDateToggle from "./modules/currentDateToggle";
 import { updateTime } from "./modules/updateTime";
 
@@ -9,6 +12,7 @@ function init() {
     currentDateToggle();
 
     setCalculationListeners();
+    setQuickDateCheckListeners();
 }
 
 document.addEventListener("DOMContentLoaded", init);

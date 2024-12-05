@@ -5,6 +5,7 @@ import {
     isCustomDateSelected,
     resetState,
     setErrorMessage,
+    setQuickActionVerbText,
     setResultMessage,
 } from "./utils";
 
@@ -37,6 +38,94 @@ export const setCalculationListeners = () => {
     });
     verbRadios.forEach((radio) => {
         radio.addEventListener("change", calculateDays);
+    });
+};
+
+export const setQuickDateCheckListeners = () => {
+    const { quickActionButtons, quickActionToggles, quickActionVerbs } = getElements();
+
+    if (!quickActionButtons.length) {
+        console.error("Couldn't find the quick action buttons");
+        return;
+    }
+
+    if (!quickActionToggles.length) {
+        console.error("Couldn't find the quick action toggles");
+        return;
+    }
+
+    if (!quickActionVerbs.length) {
+        console.error("Couldn't find the quick action verbs");
+        return;
+    }
+
+    setQuickActionVerbText();
+
+    quickActionToggles.forEach((toggle) => {
+        toggle.addEventListener("change", setQuickActionVerbText);
+    });
+
+    quickActionButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+            const { targetDateInput } = getElements();
+
+            if (!targetDateInput || !(targetDateInput instanceof HTMLInputElement)) {
+                console.error("Couldn't find the target date input");
+                return;
+            }
+
+            const activeQcVerb = quickActionToggles.find((toggle) => {
+                if (!(toggle instanceof HTMLInputElement)) {
+                    return false;
+                }
+
+                return toggle.checked;
+            });
+
+            if (!(activeQcVerb instanceof HTMLInputElement)) {
+                console.error("Couldn't find the active quick action verb");
+                return;
+            }
+
+            if (activeQcVerb.value === "until-qc") {
+                const targetInputDate = button.getAttribute("data-date");
+                const currentDate = dayjs();
+                const formattedTargetInputDateForThisYear = dayjs(
+                    `${currentDate.year()}-${targetInputDate}`
+                );
+                const hasPassed = currentDate.isAfter(
+                    formattedTargetInputDateForThisYear
+                );
+
+                if (hasPassed) {
+                    targetDateInput.value = `${
+                        currentDate.year() + 1
+                    }-${targetInputDate}`;
+                } else {
+                    targetDateInput.value = `${currentDate.year()}-${targetInputDate}`;
+                }
+            } else {
+                const targetInputDate = button.getAttribute("data-date");
+                const currentDate = dayjs();
+                const formattedTargetInputDateForThisYear = dayjs(
+                    `${currentDate.year()}-${targetInputDate}`
+                );
+
+                const isLastYear = currentDate.isBefore(
+                    formattedTargetInputDateForThisYear
+                );
+
+                if (isLastYear) {
+                    targetDateInput.value = `${
+                        currentDate.year() - 1
+                    }-${targetInputDate}`;
+                } else {
+                    targetDateInput.value = `${currentDate.year()}-${targetInputDate}`;
+                }
+            }
+
+            calculateDays();
+        });
     });
 };
 

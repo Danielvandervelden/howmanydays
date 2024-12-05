@@ -98,6 +98,121 @@
                 </p>
             </section>
             <section class="bg-white shadow-md rounded-lg p-2 mb-8 md:p-6">
+                <h2 class="text-2xl text-center">Quickly check how many days:</h2>
+                <div class="flex justify-center mt-2">
+                    <div class="rounded-md bg-blue-200 inline-flex">
+                        <div class="relative">
+                            <input
+                                type="radio"
+                                id="since-qc"
+                                name="verb-qc"
+                                value="since-qc"
+                                class="absolute top-0 right-0 block w-full h-full opacity-0 peer quick-action-toggle" />
+                            <label
+                                for="since-qc"
+                                class="rounded-l-md px-5 py-2 flex items-center peer-checked:bg-blue-600 peer-checked:text-white">
+                                Since
+                            </label>
+                        </div>
+                        <div class="relative">
+                            <input
+                                type="radio"
+                                id="until-qc"
+                                name="verb-qc"
+                                value="until-qc"
+                                class="absolute top-0 right-0 block w-full h-full opacity-0 peer quick-action-toggle"
+                                checked />
+                            <label
+                                for="until-qc"
+                                class="rounded-r-md px-5 py-2 flex items-center peer-checked:bg-blue-600 peer-checked:text-white">
+                                Until
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex gap-2 overflow-auto xl:justify-center mt-3 pb-5">
+                    <!-- Christmas -->
+                    <button
+                        id="christmas"
+                        data-date="12-25"
+                        class="quick-action-button px-4 py-2 bg-red-600 text-white font-semibold rounded-md shadow-md hover:bg-red-700 focus:ring focus:ring-red-300 whitespace-nowrap">
+                        <span class="qc-verb-text"></span> Christmas
+                    </button>
+
+                    <!-- Halloween -->
+                    <button
+                        id="halloween"
+                        data-date="10-31"
+                        class="quick-action-button px-4 py-2 bg-orange-500 text-white font-semibold rounded-md shadow-md hover:bg-orange-600 focus:ring focus:ring-orange-300 whitespace-nowrap">
+                        <span class="qc-verb-text"></span> Halloween
+                    </button>
+
+                    <!-- Thanksgiving -->
+                    <button
+                        id="thanksgiving"
+                        data-date="11-25"
+                        class="quick-action-button px-4 py-2 bg-amber-500 text-white font-semibold rounded-md shadow-md hover:bg-amber-600 focus:ring focus:ring-amber-300 whitespace-nowrap">
+                        <span class="qc-verb-text"></span> Thanksgiving
+                    </button>
+
+                    <!-- New Year -->
+                    <button
+                        id="new-year"
+                        data-date="01-01"
+                        class="quick-action-button px-4 py-2 bg-green-500 text-white font-semibold rounded-md shadow-md hover:bg-green-600 focus:ring focus:ring-green-300 whitespace-nowrap">
+                        <span class="qc-verb-text"></span> New Year
+                    </button>
+
+                    <!-- Easter -->
+                    <button
+                        id="easter"
+                        data-date="04-04"
+                        class="quick-action-button px-4 py-2 bg-pink-500 text-white font-semibold rounded-md shadow-md hover:bg-pink-600 focus:ring focus:ring-pink-300 whitespace-nowrap">
+                        <span class="qc-verb-text"></span> Easter
+                    </button>
+
+                    <!-- Valentine's Day -->
+                    <button
+                        id="valentines"
+                        data-date="02-14"
+                        class="quick-action-button px-4 py-2 bg-red-500 text-white font-semibold rounded-md shadow-md hover:bg-red-600 focus:ring focus:ring-red-300 whitespace-nowrap">
+                        <span class="qc-verb-text"></span> Valentine's
+                    </button>
+
+                    <!-- Summer -->
+                    <button
+                        id="summer"
+                        data-date="06-21"
+                        class="quick-action-button px-4 py-2 bg-yellow-500 text-black font-semibold rounded-md shadow-md hover:bg-yellow-600 focus:ring focus:ring-yellow-300 whitespace-nowrap">
+                        <span class="qc-verb-text"></span> Summer
+                    </button>
+
+                    <!-- Winter -->
+                    <button
+                        id="winter"
+                        data-date="12-21"
+                        class="quick-action-button px-4 py-2 bg-blue-500 text-white font-semibold rounded-md shadow-md hover:bg-blue-600 focus:ring focus:ring-blue-300 whitespace-nowrap">
+                        <span class="qc-verb-text"></span> Winter
+                    </button>
+
+                    <!-- Autumn -->
+                    <button
+                        id="autumn"
+                        data-date="09-22"
+                        class="quick-action-button px-4 py-2 bg-orange-400 text-white font-semibold rounded-md shadow-md hover:bg-orange-500 focus:ring focus:ring-orange-200 whitespace-nowrap">
+                        <span class="qc-verb-text"></span> Autumn
+                    </button>
+
+                    <!-- Spring -->
+                    <button
+                        id="spring"
+                        data-date="03-20"
+                        class="quick-action-button px-4 py-2 bg-green-400 text-white font-semibold rounded-md shadow-md hover:bg-green-500 focus:ring focus:ring-green-200 whitespace-nowrap">
+                        <span class="qc-verb-text"></span> Spring
+                    </button>
+                </div>
+            </section>
+            <section class="bg-white shadow-md rounded-lg p-2 mb-8 md:p-6">
                 <p class="text-lg font-medium text-gray-700 text-center">
                     Do you want to use the current date or a custom date?
                 </p>

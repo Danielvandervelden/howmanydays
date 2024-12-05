@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --font-family: "PT Sans", sans-serif;
+    --default-font-color: #333;
+}
+
+body {
+    font-family: var(--font-family);
+    color: var(--default-font-color);
+}

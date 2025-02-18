@@ -1,4 +1,5 @@
 import {
+    calculateDays,
     setCalculationListeners,
     setQuickDateCheckListeners,
 } from "./modules/calculateDays/calculateDays";
@@ -21,6 +22,7 @@ function init() {
     setTargetDateBasedOnUrlParams();
     setCountingBasedOnUrlParams();
     setStartDateBasedOnUrlParams();
+    calculateDays();
 }
 
 document.addEventListener("DOMContentLoaded", init);

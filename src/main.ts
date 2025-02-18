@@ -3,6 +3,11 @@ import {
     setQuickDateCheckListeners,
 } from "./modules/calculateDays/calculateDays";
 import currentDateToggle from "./modules/currentDateToggle";
+import {
+    setCountingBasedOnUrlParams,
+    setStartDateBasedOnUrlParams,
+    setTargetDateBasedOnUrlParams,
+} from "./modules/urlParams";
 import { updateTime } from "./modules/updateTime";
 
 function init() {
@@ -13,6 +18,9 @@ function init() {
 
     setCalculationListeners();
     setQuickDateCheckListeners();
+    setTargetDateBasedOnUrlParams();
+    setCountingBasedOnUrlParams();
+    setStartDateBasedOnUrlParams();
 }
 
 document.addEventListener("DOMContentLoaded", init);

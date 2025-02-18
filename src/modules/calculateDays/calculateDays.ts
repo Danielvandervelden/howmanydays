@@ -8,6 +8,17 @@ import {
     setQuickActionVerbText,
     setResultMessage,
 } from "./utils";
+import {
+    removeUrlParam,
+    setCountingUrlParam,
+    setStartDateUrlParam,
+    setTargetDateUrlParam,
+} from "../urlParams";
+import {
+    COUNTING_URL_PARAM,
+    STARTING_DATE_URL_PARAM,
+    TARGET_DATE_URL_PARAM,
+} from "../constants";
 
 export const setCalculationListeners = () => {
     const { currentDateInput, targetDateInput, dateRadios, verbRadios } = getElements();
@@ -31,8 +42,12 @@ export const setCalculationListeners = () => {
         return;
     }
 
-    targetDateInput.addEventListener("change", calculateDays);
-    currentDateInput.addEventListener("change", calculateDays);
+    targetDateInput.addEventListener("change", () => {
+        calculateDays();
+    });
+    currentDateInput.addEventListener("change", () => {
+        calculateDays();
+    });
     dateRadios.forEach((radio) => {
         radio.addEventListener("change", calculateDays);
     });
@@ -62,7 +77,13 @@ export const setQuickDateCheckListeners = () => {
     setQuickActionVerbText();
 
     quickActionToggles.forEach((toggle) => {
-        toggle.addEventListener("change", setQuickActionVerbText);
+        toggle.addEventListener("change", () => {
+            setCountingUrlParam();
+            setQuickActionVerbText();
+            removeUrlParam(STARTING_DATE_URL_PARAM);
+            removeUrlParam(TARGET_DATE_URL_PARAM);
+            calculateDays();
+        });
     });
 
     quickActionButtons.forEach((button) => {
@@ -74,7 +95,7 @@ export const setQuickDateCheckListeners = () => {
     });
 };
 
-const calculateDays = () => {
+export const calculateDays = () => {
     resetState();
     const isCustomDateEnabled = isCustomDateSelected();
     const { resultDiv, verbRadios } = getElements();
@@ -121,7 +142,7 @@ function calculateDaysBetweenNowAndTargetDate() {
 }
 
 function calculateDaysBetweenSelectedDateAndTargetDate() {
-    const { currentDateInput, targetDateInput, verbRadios } = getElements();
+    const { currentDateInput, targetDateInput } = getElements();
 
     if (!(currentDateInput instanceof HTMLInputElement)) {
         console.error("currentDateInput is not an instance of HTMLInputElement");
@@ -136,6 +157,8 @@ function calculateDaysBetweenSelectedDateAndTargetDate() {
         console.error("Couldn't find the target date input or it's not an input element");
         return;
     }
+
+    setStartDateUrlParam();
 
     const targetDate = dayjs(targetDateInput.value);
     const currentDate = dayjs(currentDateInput.value);
@@ -203,6 +226,7 @@ const handleQuickActionClick = (button: HTMLButtonElement) => {
     }
 
     calculateDays();
+    setTargetDateUrlParam();
     resultDiv?.scrollIntoView({ behavior: "smooth" });
 };
 

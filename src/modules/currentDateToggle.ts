@@ -1,3 +1,6 @@
+import { STARTING_DATE_URL_PARAM } from "./constants";
+import { removeUrlParam } from "./urlParams";
+
 export default function currentDateToggle() {
     const dateRadios = Array.from(document.querySelectorAll(".date-radio"));
 
@@ -22,7 +25,7 @@ export default function currentDateToggle() {
     });
 }
 
-function toggleOtherDateInput(show: boolean) {
+export function toggleOtherDateInput(show: boolean) {
     const otherDateInputWrapper = document.getElementById("current-date-wrapper");
 
     if (!otherDateInputWrapper) {
@@ -34,5 +37,6 @@ function toggleOtherDateInput(show: boolean) {
         otherDateInputWrapper.classList.remove("hidden");
     } else {
         otherDateInputWrapper.classList.add("hidden");
+        removeUrlParam(STARTING_DATE_URL_PARAM);
     }
 }

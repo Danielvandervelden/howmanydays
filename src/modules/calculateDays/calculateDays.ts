@@ -44,6 +44,7 @@ export const setCalculationListeners = () => {
 
     targetDateInput.addEventListener("change", () => {
         calculateDays();
+        setTargetDateUrlParam();
     });
     currentDateInput.addEventListener("change", () => {
         calculateDays();

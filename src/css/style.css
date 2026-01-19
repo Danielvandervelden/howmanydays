@@ -1,21 +1,42 @@
-:root {
-    --font-family: "PT Sans", sans-serif;
-    --default-font-color: #333;
+@import './modules/buttons.css';
+@import './modules/header.css';
+
+html {
+  --font-family: "PT Sans", sans-serif;
+  --default-font-color: #f3f3f3;
+  --link-color: rgb(37 99 235);
+  --svg-color: var(--default-font-color);
+  --background-color: #333;
+  --color-primary: rgb(37 99 235);
+}
+
+html.light-mode {
+  --default-font-color: #333;
+  --background-color: rgb(239, 246, 255);
 }
 
 body {
-    font-family: var(--font-family);
-    color: var(--default-font-color);
+  font-family: var(--font-family);
+  color: var(--default-font-color);
+  background-color: var(--background-color);
+}
+
+svg {
+  fill: var(--svg-color);
+}
+
+a {
+  color: var(--link-color);
 }
 
 .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap; /* Prevents text wrapping */
-    border: 0;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap; /* Prevents text wrapping */
+  border: 0;
 }

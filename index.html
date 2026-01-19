@@ -91,10 +91,10 @@
         style="display: none; visibility: hidden"
       ></iframe
     ></noscript>
-    <header>
+    <header id="header">
       <h1>How many days</h1>
-      <div>
-        <div class="mode-toggle-container">
+      <div id="header-actions-container">
+        <div class="light-dark-toggle-container">
           <button
             id="dark-mode-toggle"
             class="mode-toggle icon-button"
@@ -116,7 +116,9 @@
         </div>
         <div class="built-by-container">
           Built by <a href="https://imdaniel.dev" target="_blank">Daniël</a
-          ><svg><use href="/svg-icons.svg#github"></use></svg>
+          ><button class="icon-button">
+            <svg><use href="/svg-icons.svg#github"></use></svg>
+          </button>
         </div>
       </div>
     </header>
@@ -126,6 +128,10 @@
           <svg><use href="/svg-icons.svg#clock"></use></svg>
           <span id="current-time"></span>
           <span id="current-date"></span>
+        </div>
+        <div id="mode-toggle-container">
+          <button id="until-button">Until</button>
+          <button id="since-button">Since</button>
         </div>
         <div id="quick-select-container">
           <div id="quick-select-header">

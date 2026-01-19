@@ -1,8 +1,14 @@
 button {
   border: none;
   box-shadow: none;
-  color: #333;
+  color: var(--button-text-color);
   cursor: pointer;
+  background-color: var(--button-background-color);
+
+  &.active {
+    color: var(--active-button-text-color);
+    background-color: var(--active-button-background-color);
+  }
 
   svg {
     max-width: 100%;
@@ -18,7 +24,15 @@ button {
     height: 24px;
 
     svg {
-      fill: #333;
+      fill: var(--button-text-color);
     }
+  }
+
+  &.active:hover {
+    background-color: var(--active-button-hover-background-color);
+  }
+
+  &:hover {
+    background-color: var(--button-hover-background-color);
   }
 }

@@ -5,9 +5,17 @@ html {
   --font-family: "PT Sans", sans-serif;
   --default-font-color: #f3f3f3;
   --link-color: rgb(37 99 235);
+  --active-button-text-color: var(--default-font-color);
+  --button-text-color: var(--default-font-color);
+  --active-button-background-color: rgba(37 99 235 / 0.5);
+  --button-background-color: rgba(84, 84, 84, 1);
+  --active-button-hover-background-color: rgba(37 99 235 / 1);
+  --button-hover-background-color: rgba(100, 100, 100, 1);
   --svg-color: var(--default-font-color);
   --background-color: #333;
   --color-primary: rgb(37 99 235);
+  --light-grey: #585858;
+  --tile-background-color: rgba(32, 32, 32, 1);
 }
 
 html.light-mode {

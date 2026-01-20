@@ -1,32 +1,28 @@
+@import "tailwindcss";
 @import './modules/buttons.css';
-@import './modules/header.css';
+@import './modules/typography.css';
 
-html {
+@theme {
   --font-family: "PT Sans", sans-serif;
-  --default-font-color: #f3f3f3;
-  --link-color: rgb(37 99 235);
-  --active-button-text-color: var(--default-font-color);
-  --button-text-color: var(--default-font-color);
-  --active-button-background-color: rgba(37 99 235 / 0.5);
-  --button-background-color: rgba(84, 84, 84, 1);
-  --active-button-hover-background-color: rgba(37 99 235 / 1);
-  --button-hover-background-color: rgba(100, 100, 100, 1);
-  --svg-color: var(--default-font-color);
-  --background-color: #333;
-  --color-primary: rgb(37 99 235);
-  --light-grey: #585858;
-  --tile-background-color: rgba(32, 32, 32, 1);
-}
-
-html.light-mode {
-  --default-font-color: #333;
-  --background-color: rgb(239, 246, 255);
+  --default-font-color: #0f172a;
+  --background-color: #f8fafc;
+  --link-color: #0ea5e9;
+  --color-primary: #0ea5e9;
+  --light-grey: #94a3b8;
+  --svg-color: #0f172a;
 }
 
 body {
   font-family: var(--font-family);
-  color: var(--default-font-color);
-  background-color: var(--background-color);
+}
+
+.dark {
+  --default-font-color: #e2e8f0;
+  --background-color: #0f172a;
+  --link-color: #38bdf8;
+  --color-primary: #38bdf8;
+  --light-grey: #475569;
+  --svg-color: #e2e8f0;
 }
 
 svg {
@@ -35,6 +31,10 @@ svg {
 
 a {
   color: var(--link-color);
+}
+
+svg {
+  @apply dark:fill-white dark:stroke-white fill-slate-900 stroke-slate-900;
 }
 
 .sr-only {

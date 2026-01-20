@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <script>
       (function (w, d, s, l, i) {
@@ -82,7 +82,9 @@
       }
     </script>
   </head>
-  <body>
+  <body
+    class="bg-slate-50 text-slate-900 min-h-screen dark:bg-slate-900 dark:text-slate-100"
+  >
     <noscript
       ><iframe
         src="https://www.googletagmanager.com/ns.html?id=GTM-WLNSXRJT"
@@ -91,84 +93,157 @@
         style="display: none; visibility: hidden"
       ></iframe
     ></noscript>
-    <header id="header">
+    <header
+      class="py-6 px-6 md:px-8 max-w-6xl mx-auto w-full flex justify-between items-center"
+    >
       <h1>How many days</h1>
-      <div id="header-actions-container">
-        <div class="light-dark-toggle-container">
-          <button
-            id="dark-mode-toggle"
-            class="mode-toggle icon-button"
-            aria-label="Dark mode"
+      <div class="flex gap-4 items-center">
+        <div
+          class="flex items-center gap-2 text-slate-600 text-sm dark:text-slate-300"
+        >
+          Built by
+          <a
+            href="https://imdaniel.dev"
+            target="_blank"
+            class="text-slate-700 hover:text-slate-900 underline underline-offset-2 dark:text-slate-200 dark:hover:text-slate-100"
+            >Daniël</a
+          ><a
+            href="https://github.com/danielvandervelden"
+            target="_blank"
+            class="btn-icon btn-icon-secondary"
           >
-            <svg aria-hidden="true" focusable="false">
-              <use href="/svg-icons.svg#moon"></use>
-            </svg>
-          </button>
-          <button
-            id="light-mode-toggle"
-            class="mode-toggle icon-button"
-            aria-label="Light mode"
-          >
-            <svg aria-hidden="true" focusable="false">
-              <use href="/svg-icons.svg#sun"></use>
-            </svg>
-          </button>
-        </div>
-        <div class="built-by-container">
-          Built by <a href="https://imdaniel.dev" target="_blank">Daniël</a
-          ><button class="icon-button">
-            <svg><use href="/svg-icons.svg#github"></use></svg>
-          </button>
+            <svg class="w-4 h-4"><use href="/svg-icons.svg#github"></use></svg>
+          </a>
         </div>
       </div>
     </header>
-    <main>
-      <section id="configuration-container">
-        <div id="current-time-container">
-          <svg><use href="/svg-icons.svg#clock"></use></svg>
+    <main
+      class="flex gap-6 md:flex-row flex-col max-w-6xl mx-auto w-full px-6 md:px-8 pb-10"
+    >
+      <section
+        class="w-full md:w-2/3 bg-white border border-slate-200 rounded-2xl shadow-sm p-6 md:p-8 flex flex-col gap-6 dark:bg-slate-900 dark:border-slate-700"
+      >
+        <div
+          id="current-time-container"
+          class="flex items-center gap-3 text-slate-600 text-sm dark:text-slate-300"
+        >
+          <svg class="w-5 h-5 text-slate-500 dark:text-slate-400">
+            <use href="/svg-icons.svg#clock"></use>
+          </svg>
           <span id="current-time"></span>
           <span id="current-date"></span>
         </div>
-        <div id="mode-toggle-container">
-          <button id="until-button">Until</button>
-          <button id="since-button">Since</button>
+        <div
+          id="mode-toggle-container"
+          class="inline-flex gap-2 bg-slate-100 rounded-full p-1 w-fit dark:bg-slate-800"
+          role="radiogroup"
+        >
+          <label class="btn-secondary px-6 cursor-pointer" for="until-radio">
+            <input
+              type="radio"
+              id="until-radio"
+              name="mode"
+              value="until"
+              class="sr-only"
+              checked
+            />
+            <span>Until</span>
+          </label>
+          <label class="btn-secondary px-6 cursor-pointer" for="since-radio">
+            <input
+              type="radio"
+              id="since-radio"
+              name="mode"
+              value="since"
+              class="sr-only"
+            />
+            <span>Since</span>
+          </label>
         </div>
-        <div id="quick-select-container">
-          <div id="quick-select-header">
-            <span class="section-title">Quick selects</span>
-            <button>
-              <svg><use href="/svg-icons.svg#slider"></use></svg> Manage
+        <div id="quick-select-container" class="flex flex-col gap-3">
+          <div
+            id="quick-select-header"
+            class="flex items-center justify-between"
+          >
+            <span
+              class="section-title text-slate-700 font-semibold dark:text-slate-200"
+              >Quick selects</span
+            >
+            <button
+              class="btn-secondary flex items-center gap-2 text-slate-500 text-sm font-semibold dark:text-slate-400"
+            >
+              <svg class="w-4 h-4">
+                <use href="/svg-icons.svg#slider"></use>
+              </svg>
+              Manage
             </button>
           </div>
-          <div id="quick-select-content"></div>
+          <div id="quick-select-content" class="flex flex-wrap gap-2"></div>
         </div>
-        <div id="dates-container">
-          <div class="flex">
+        <div id="dates-container" class="flex flex-col gap-4">
+          <div class="flex flex-col md:flex-row gap-4">
             <div>
-              <div>
-                <label for="from-date">From:</label>
-                <button id="today-button">Today</button>
+              <div class="flex items-center justify-between">
+                <label
+                  for="from-date"
+                  class="text-sm font-semibold text-slate-700 dark:text-slate-200"
+                  >From:</label
+                >
               </div>
-              <input type="date" id="from-date" placeholder="From date" />
+              <input
+                type="date"
+                id="from-date"
+                placeholder="From date"
+                class="mt-1 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-200 focus:border-sky-300 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:ring-sky-700 dark:focus:border-sky-600"
+              />
             </div>
             <div>
-              <label for="to-date">To:</label>
-              <input type="date" id="to-date" placeholder="To date" />
+              <div class="flex items-center justify-between">
+                <label
+                  for="to-date"
+                  class="text-sm font-semibold text-slate-700 dark:text-slate-200"
+                  >To:</label
+                >
+              </div>
+              <input
+                type="date"
+                id="to-date"
+                placeholder="To date"
+                class="mt-1 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-200 focus:border-sky-300 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:ring-sky-700 dark:focus:border-sky-600"
+              />
             </div>
           </div>
         </div>
       </section>
-      <section id="result-container">
-        <div id="days-result-container">
-          <span id="days-result"></span>
-          <div>
-            <span>Days</span>
-            <div id="quick-select-result">
+      <section
+        id="result-container"
+        class="w-full md:w-1/3 bg-emerald-50 border border-emerald-100 rounded-2xl shadow-sm p-6 md:p-8 flex items-center justify-center dark:bg-emerald-950/40 dark:border-emerald-900"
+      >
+        <div
+          id="days-result-container"
+          class="flex flex-col items-center text-center gap-4"
+        >
+          <span
+            id="days-result"
+            class="text-6xl md:text-7xl font-bold text-emerald-600 leading-none dark:text-emerald-400"
+          ></span>
+          <div class="flex flex-col gap-2">
+            <span
+              class="text-xl font-semibold text-slate-900 dark:text-slate-100"
+              >Days</span
+            >
+            <div
+              id="quick-select-result"
+              class="text-sm text-slate-600 dark:text-slate-300"
+            >
               <span id="mode"></span>
               <span id="quick-select-result-text"></span>
             </div>
           </div>
-          <div id="months-result"></div>
+          <div
+            id="months-result"
+            class="text-sm text-slate-500 dark:text-slate-400"
+          ></div>
         </div>
       </section>
     </main>

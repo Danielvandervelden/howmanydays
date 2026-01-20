@@ -1,38 +1,39 @@
-button {
-  border: none;
-  box-shadow: none;
-  color: var(--button-text-color);
-  cursor: pointer;
-  background-color: var(--button-background-color);
-
-  &.active {
-    color: var(--active-button-text-color);
-    background-color: var(--active-button-background-color);
+@layer components {
+  .btn-primary {
+    @apply bg-sky-500 text-white px-4 py-2 rounded-full font-semibold cursor-pointer transition-all hover:bg-sky-600 dark:bg-sky-400 dark:hover:bg-sky-500;
   }
 
-  svg {
-    max-width: 100%;
-    max-height: 100%;
+  .btn-secondary {
+    @apply bg-slate-100 text-slate-700  px-4 py-2 rounded-full border border-slate-200 font-semibold cursor-pointer transition-all hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700 dark:hover:bg-slate-700;
   }
 
-  &.icon-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-
-    svg {
-      fill: var(--button-text-color);
-    }
+  .btn-icon {
+    @apply p-1 rounded-full w-8 h-8 flex items-center justify-center border border-slate-200 bg-slate-100 text-slate-700 cursor-pointer transition-all hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700 dark:hover:bg-slate-700;
   }
 
-  &.active:hover {
-    background-color: var(--active-button-hover-background-color);
+  .btn-icon-primary {
+    @apply bg-sky-500 text-white hover:bg-sky-600 dark:bg-sky-400 dark:hover:bg-sky-500;
   }
 
-  &:hover {
-    background-color: var(--button-hover-background-color);
+  .btn-icon-secondary {
+    @apply bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700;
+  }
+
+  /* Radio button toggle styling */
+  #mode-toggle-container label {
+    @apply flex items-center justify-center;
+  }
+
+  #mode-toggle-container input[type="radio"]:checked + span,
+  #mode-toggle-container input[type="radio"]:checked ~ span {
+    @apply bg-sky-500 text-white border-sky-500 dark:bg-sky-400 dark:border-sky-400;
+  }
+
+  #mode-toggle-container input[type="radio"]:checked ~ * {
+    @apply bg-sky-500 text-white border-sky-500 dark:bg-sky-400 dark:border-sky-400;
+  }
+
+  #mode-toggle-container label:has(input[type="radio"]:checked) {
+    @apply bg-sky-500 text-white border-sky-500 dark:bg-sky-400 dark:border-sky-400;
   }
 }

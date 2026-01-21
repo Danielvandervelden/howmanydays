@@ -500,197 +500,90 @@ function handleDeleteQuickSelect(id: string) {
 function setupDragAndDrop(container: HTMLElement) {
     const items = container.querySelectorAll("[data-id]");
     let draggedElement: HTMLElement | null = null;
-    let touchStartY = 0;
-    let isDragging = false;
-    let touchMoveHandler: EventListener | null = null;
-    let touchEndHandler: EventListener | null = null;
-    let touchCancelHandler: EventListener | null = null;
+    let activeHandle: HTMLElement | null = null;
+    let activePointerId: number | null = null;
 
-    const cleanupTouchHandlers = () => {
-        if (touchMoveHandler) {
-            document.removeEventListener("touchmove", touchMoveHandler);
-            touchMoveHandler = null;
-        }
-        if (touchEndHandler) {
-            document.removeEventListener("touchend", touchEndHandler);
-            touchEndHandler = null;
-        }
-        if (touchCancelHandler) {
-            document.removeEventListener("touchcancel", touchCancelHandler);
-            touchCancelHandler = null;
+    const getTargetItem = (x: number, y: number) => {
+        const elementAtPoint = document.elementFromPoint(x, y) as HTMLElement | null;
+        if (!elementAtPoint) return null;
+        return elementAtPoint.closest("[data-id]") as HTMLElement | null;
+    };
+
+    const moveItem = (target: HTMLElement, pointerY: number) => {
+        if (!draggedElement || target === draggedElement) return;
+
+        const rect = target.getBoundingClientRect();
+        const insertBefore = pointerY < rect.top + rect.height / 2;
+        if (insertBefore) {
+            container.insertBefore(draggedElement, target);
+        } else {
+            container.insertBefore(draggedElement, target.nextSibling);
         }
     };
 
-    const handleTouchMove = (e: Event) => {
-        const touchEvent = e as TouchEvent;
-        if (!isDragging || !draggedElement) {
-            cleanupTouchHandlers();
+    const onPointerMove = (event: PointerEvent) => {
+        if (!draggedElement || activePointerId !== event.pointerId) return;
+        const target = getTargetItem(event.clientX, event.clientY);
+        if (target) {
+            moveItem(target, event.clientY);
+        }
+        event.preventDefault();
+    };
+
+    const endDrag = (event?: PointerEvent) => {
+        if (event && activePointerId !== event.pointerId) return;
+        if (draggedElement) {
+            draggedElement.classList.remove("opacity-50");
+            draggedElement = null;
+            saveNewOrder();
+        }
+        if (activeHandle && activePointerId !== null) {
+            if (activeHandle.releasePointerCapture) {
+                activeHandle.releasePointerCapture(activePointerId);
+            }
+        }
+        activeHandle = null;
+        activePointerId = null;
+        container.removeEventListener("pointermove", onPointerMove);
+        container.removeEventListener("pointerup", endDrag);
+        container.removeEventListener("pointercancel", endDrag);
+    };
+
+    const startDrag = (handle: HTMLElement, item: HTMLElement, event: PointerEvent) => {
+        if (event.button !== 0 && event.pointerType !== "touch") {
             return;
         }
 
-        const touch = touchEvent.touches[0];
-        if (!touch) return;
-
-        const currentY = touch.clientY;
-
-        // Prevent scrolling while dragging
-        touchEvent.preventDefault();
-
-        // Find which item we're over based on the touch position
-        const allItems = Array.from(container.querySelectorAll("[data-id]"));
-        let targetItem: HTMLElement | null = null;
-
-        // Find the item that contains the touch point
-        for (const otherItem of allItems) {
-            if (otherItem === draggedElement) continue;
-
-            const rect = (otherItem as HTMLElement).getBoundingClientRect();
-            // Check if touch is within the item's bounds
-            if (currentY >= rect.top && currentY <= rect.bottom) {
-                targetItem = otherItem as HTMLElement;
-                break;
-            }
-        }
-
-        // If no direct hit, find the closest item
-        if (!targetItem) {
-            let minDistance = Infinity;
-            for (const otherItem of allItems) {
-                if (otherItem === draggedElement) continue;
-
-                const rect = (otherItem as HTMLElement).getBoundingClientRect();
-                const itemCenterY = rect.top + rect.height / 2;
-                const distance = Math.abs(currentY - itemCenterY);
-
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    targetItem = otherItem as HTMLElement;
-                }
-            }
-        }
-
-        // Move the dragged element to the correct position
-        if (targetItem && targetItem !== draggedElement) {
-            const rect = targetItem.getBoundingClientRect();
-            const midpoint = rect.top + rect.height / 2;
-
-            // Only move if we're actually crossing a boundary
-            const draggedRect = draggedElement.getBoundingClientRect();
-            const draggedIndex = Array.from(allItems).indexOf(draggedElement);
-            const targetIndex = Array.from(allItems).indexOf(targetItem);
-
-            if (currentY < midpoint) {
-                // Insert before target
-                if (targetIndex > draggedIndex) {
-                    // Moving down, need to account for the element being removed
-                    const nextSibling = targetItem.previousElementSibling;
-                    if (nextSibling && nextSibling !== draggedElement) {
-                        nextSibling.insertAdjacentElement("afterend", draggedElement);
-                    } else {
-                        targetItem.parentNode?.insertBefore(draggedElement, targetItem);
-                    }
-                } else {
-                    targetItem.parentNode?.insertBefore(draggedElement, targetItem);
-                }
-            } else {
-                // Insert after target
-                if (targetIndex < draggedIndex) {
-                    // Moving up
-                    targetItem.insertAdjacentElement("afterend", draggedElement);
-                } else {
-                    const nextSibling = targetItem.nextElementSibling;
-                    if (nextSibling && nextSibling !== draggedElement) {
-                        nextSibling.insertAdjacentElement("beforebegin", draggedElement);
-                    } else {
-                        targetItem.parentNode?.insertBefore(
-                            draggedElement,
-                            targetItem.nextSibling,
-                        );
-                    }
-                }
-            }
-        }
-    };
-
-    const handleTouchEnd = (e: Event) => {
-        if (draggedElement) {
+        if (draggedElement && draggedElement !== item) {
             draggedElement.classList.remove("opacity-50");
-            draggedElement = null;
-            isDragging = false;
-            saveNewOrder();
         }
-        cleanupTouchHandlers();
-    };
 
-    const handleTouchCancel = (e: Event) => {
-        if (draggedElement) {
-            draggedElement.classList.remove("opacity-50");
-            draggedElement = null;
-            isDragging = false;
+        draggedElement = item;
+        activeHandle = handle;
+        activePointerId = event.pointerId;
+        draggedElement.classList.add("opacity-50");
+
+        if (handle.setPointerCapture) {
+            handle.setPointerCapture(event.pointerId);
         }
-        cleanupTouchHandlers();
+
+        container.addEventListener("pointermove", onPointerMove);
+        container.addEventListener("pointerup", endDrag);
+        container.addEventListener("pointercancel", endDrag);
+
+        event.preventDefault();
     };
 
     items.forEach((item) => {
-        const dragHandle = item.querySelector(".drag-handle");
+        const handle = item.querySelector(".drag-handle") as HTMLElement | null;
+        if (!handle) return;
 
-        if (!dragHandle) return;
+        // Make sure touch dragging doesn't trigger scroll/zoom
+        handle.style.touchAction = "none";
 
-        // Mouse events
-        dragHandle.addEventListener("mousedown", () => {
-            (item as HTMLElement).setAttribute("draggable", "true");
-        });
-
-        item.addEventListener("dragstart", (e) => {
-            draggedElement = item as HTMLElement;
-            draggedElement.classList.add("opacity-50");
-        });
-
-        item.addEventListener("dragend", () => {
-            if (draggedElement) {
-                draggedElement.classList.remove("opacity-50");
-                draggedElement.removeAttribute("draggable");
-                draggedElement = null;
-            }
-            saveNewOrder();
-        });
-
-        item.addEventListener("dragover", (e) => {
-            e.preventDefault();
-            if (draggedElement && draggedElement !== item) {
-                const rect = (item as HTMLElement).getBoundingClientRect();
-                const midpoint = rect.top + rect.height / 2;
-                if ((e as DragEvent).clientY < midpoint) {
-                    item.parentNode?.insertBefore(draggedElement, item);
-                } else {
-                    item.parentNode?.insertBefore(draggedElement, item.nextSibling);
-                }
-            }
-        });
-
-        // Touch events for mobile
-        dragHandle.addEventListener("touchstart", (e: Event) => {
-            const touchEvent = e as TouchEvent;
-            const touch = touchEvent.touches[0];
-            if (!touch) return;
-
-            touchStartY = touch.clientY;
-            draggedElement = item as HTMLElement;
-            isDragging = true;
-            draggedElement.classList.add("opacity-50");
-
-            // Prevent default to avoid scrolling
-            touchEvent.preventDefault();
-
-            // Attach handlers to document to track movement even outside the element
-            touchMoveHandler = handleTouchMove;
-            touchEndHandler = handleTouchEnd;
-            touchCancelHandler = handleTouchCancel;
-
-            document.addEventListener("touchmove", touchMoveHandler);
-            document.addEventListener("touchend", touchEndHandler);
-            document.addEventListener("touchcancel", touchCancelHandler);
-        });
+        handle.addEventListener("pointerdown", (event) =>
+            startDrag(handle, item as HTMLElement, event),
+        );
     });
 }
 

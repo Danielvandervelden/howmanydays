@@ -6,8 +6,8 @@ import { queryParamService } from "../utils/queryParam.service";
 
 export function handleQuickSelectsDialog() {
   const manageButton = document.querySelector(
-    "#quick-select-header button"
-  ) as HTMLButtonElement;
+    "#quick-select-header a"
+  ) as HTMLAnchorElement;
   const closeButton = document.getElementById(
     "close-manage-quick-selects-dialog"
   ) as HTMLButtonElement;
@@ -20,7 +20,13 @@ export function handleQuickSelectsDialog() {
   ) as HTMLFormElement;
 
   if (!manageButton || !closeButton || !backdrop || !dialog || !form) {
-    console.error("Required dialog elements not found");
+    console.table({
+      manageButton: !!manageButton,
+      closeButton: !!closeButton,
+      backdrop: !!backdrop,
+      dialog: !!dialog,
+      form: !!form,
+    });
     return;
   }
 
@@ -34,6 +40,8 @@ export function handleQuickSelectsDialog() {
   dateTypeInputs.forEach((input) => {
     input.addEventListener("change", handleDateTypeChange);
   });
+
+  renderQuickSelects();
 }
 
 function openDialog() {
@@ -514,12 +522,15 @@ function handleDeleteQuickSelect(id: string) {
 function setupDragAndDrop(container: HTMLElement) {
   const items = container.querySelectorAll("[data-id]");
   let draggedElement: HTMLElement | null = null;
+  let touchStartY = 0;
+  let isDragging = false;
 
   items.forEach((item) => {
     const dragHandle = item.querySelector(".drag-handle");
 
     if (!dragHandle) return;
 
+    // Mouse events
     dragHandle.addEventListener("mousedown", () => {
       (item as HTMLElement).setAttribute("draggable", "true");
     });
@@ -548,6 +559,61 @@ function setupDragAndDrop(container: HTMLElement) {
         } else {
           item.parentNode?.insertBefore(draggedElement, item.nextSibling);
         }
+      }
+    });
+
+    // Touch events for mobile
+    dragHandle.addEventListener("touchstart", (e: Event) => {
+      const touch = (e as TouchEvent).touches[0];
+      touchStartY = touch.clientY;
+      draggedElement = item as HTMLElement;
+      isDragging = true;
+      draggedElement.classList.add("opacity-50");
+      e.preventDefault();
+    });
+
+    dragHandle.addEventListener("touchmove", (e: Event) => {
+      if (!isDragging || !draggedElement) return;
+
+      const touch = (e as TouchEvent).touches[0];
+      const currentY = touch.clientY;
+
+      // Find which item we're over
+      const allItems = Array.from(container.querySelectorAll("[data-id]"));
+      let targetItem: HTMLElement | null = null;
+
+      for (const otherItem of allItems) {
+        if (otherItem === draggedElement) continue;
+
+        const rect = (otherItem as HTMLElement).getBoundingClientRect();
+        if (currentY >= rect.top && currentY <= rect.bottom) {
+          targetItem = otherItem as HTMLElement;
+          break;
+        }
+      }
+
+      if (targetItem && targetItem !== draggedElement) {
+        const rect = targetItem.getBoundingClientRect();
+        const midpoint = rect.top + rect.height / 2;
+        if (currentY < midpoint) {
+          targetItem.parentNode?.insertBefore(draggedElement, targetItem);
+        } else {
+          targetItem.parentNode?.insertBefore(
+            draggedElement,
+            targetItem.nextSibling
+          );
+        }
+      }
+
+      e.preventDefault();
+    });
+
+    dragHandle.addEventListener("touchend", () => {
+      if (draggedElement) {
+        draggedElement.classList.remove("opacity-50");
+        draggedElement = null;
+        isDragging = false;
+        saveNewOrder();
       }
     });
   });
@@ -590,11 +656,11 @@ function createQuickSelectItem(quickSelect: QuickSelect): string {
 
   return `
     <div
-      class="flex items-center gap-3 bg-slate-50 dark:bg-slate-900 rounded-xl p-4 border border-slate-200 dark:border-slate-700 group hover:border-slate-300 dark:hover:border-slate-600 transition-all"
+      class="flex items-center gap-2 md:gap-4 bg-slate-50 dark:bg-slate-900 rounded-xl p-2 md:p-4 border border-slate-200 dark:border-slate-700 group hover:border-slate-300 dark:hover:border-slate-600 transition-all"
       data-id="${quickSelect.id}"
     >
       <button
-        class="drag-handle cursor-move text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+        class="drag-handle cursor-move text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors touch-none"
       >
         <svg class="w-5 h-5">
           <use href="/svg-icons.svg#reorder"></use>
@@ -615,14 +681,14 @@ function createQuickSelectItem(quickSelect: QuickSelect): string {
       </div>
       <div class="flex items-center gap-2">
         <button
-          class="edit-button btn-icon btn-icon-secondary opacity-0 group-hover:opacity-100 transition-opacity"
+          class="edit-button btn-icon btn-icon-secondary opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
         >
           <svg class="w-4 h-4">
             <use href="/svg-icons.svg#edit"></use>
           </svg>
         </button>
         <button
-          class="delete-button btn-icon btn-icon-secondary opacity-0 group-hover:opacity-100 transition-opacity"
+          class="delete-button btn-icon btn-icon-secondary opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
         >
           <svg class="w-4 h-4">
             <use href="/svg-icons.svg#trash"></use>

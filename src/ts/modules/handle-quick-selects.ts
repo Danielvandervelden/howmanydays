@@ -160,7 +160,9 @@ function quickSelectButtonClickHandler(id: string) {
     .find((quickSelect: QuickSelect) => quickSelect.id === id);
 
   if (!quickSelect) {
-    console.error("Quick select not found");
+    console.error(
+      "Quick select in localstorage not found to handle quick select button click"
+    );
     return;
   }
   events.emit(Events.QUICK_SELECT_CLICKED, { quickSelect });

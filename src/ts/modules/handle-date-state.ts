@@ -97,7 +97,6 @@ export function handleDateState() {
 }
 
 function recalculateDates() {
-  console.log("Recalculating dates");
   const {
     mode,
     fromDate: fromDateQueryParam,
@@ -119,7 +118,9 @@ function recalculateDates() {
   }
 
   if (!quickSelect) {
-    console.error("Quick select not found");
+    console.error(
+      "Quick select in localstorage not found to recalculate dates"
+    );
     return;
   }
 

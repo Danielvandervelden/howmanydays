@@ -37,24 +37,52 @@ function calculateDaysResult() {
     resultsDiv.textContent = Math.abs(differenceInDays).toString();
   }
 
-  events.on(Events.QUICK_SELECT_REMOVED_FROM_URL, () => {
-    const quickSelectResultDiv = document.getElementById("quick-select-result");
-    if (quickSelectResultDiv) {
-      quickSelectResultDiv.textContent = "";
-    }
-  });
-
-  const quickSelectResultDiv = document.getElementById("quick-select-result");
-  const quickSelectsObject = localStorageService.get.quickSelects();
-  const quickSelect = quickSelectsObject.find(
-    (quickSelect: QuickSelect) => quickSelect.id === quickSelectQueryParam
+  events.on(Events.QUICK_SELECT_REMOVED_FROM_URL, () =>
+    setQuickResultsText(true)
   );
 
-  if (!quickSelect) {
+  setQuickResultsText();
+}
+
+function setQuickResultsText(quickSelectRemovedFromUrl: boolean = false) {
+  const quickSelectResultDiv = document.getElementById("quick-select-result");
+  const {
+    quickSelect: quickSelectQueryParam,
+    toDate: toDateQueryParam,
+    fromDate: fromDateQueryParam,
+    mode,
+  } = getQueryParams();
+
+  if (!quickSelectResultDiv) {
+    console.error("Quick select result div not found");
     return;
   }
 
   if (quickSelectResultDiv) {
-    quickSelectResultDiv.textContent = `${mode} ${quickSelect.label}`;
+    quickSelectResultDiv.textContent = "";
+  }
+
+  if (!quickSelectQueryParam || quickSelectRemovedFromUrl) {
+    const toDate = dayjs(toDateQueryParam);
+    const fromDate = dayjs(fromDateQueryParam);
+
+    if (toDate.isAfter(fromDate)) {
+      quickSelectResultDiv.textContent = "from now";
+    } else {
+      quickSelectResultDiv.textContent = "ago";
+    }
+  } else {
+    const quickSelectsObject = localStorageService.get.quickSelects();
+    const quickSelect = quickSelectsObject.find(
+      (quickSelect: QuickSelect) => quickSelect.id === quickSelectQueryParam
+    );
+
+    if (!quickSelect) {
+      return;
+    }
+
+    if (quickSelectResultDiv) {
+      quickSelectResultDiv.textContent = `${mode} ${quickSelect.label}`;
+    }
   }
 }

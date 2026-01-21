@@ -31,6 +31,7 @@ svg {
 
 a {
   color: var(--link-color);
+  @apply cursor-pointer;
 }
 
 svg {

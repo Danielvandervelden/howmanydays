@@ -64,7 +64,6 @@ function checkActiveQuickSelectToDetermineModeState() {
     .find((qs: QuickSelect) => qs.id === quickSelectQueryParam);
 
   if (!quickSelect) {
-    console.error("Quick select not found");
     return;
   }
 

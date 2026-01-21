@@ -1,0 +1,51 @@
+@import "tailwindcss";
+@import './modules/buttons.css';
+@import './modules/typography.css';
+
+@theme {
+  --font-family: "PT Sans", sans-serif;
+  --default-font-color: #0f172a;
+  --background-color: #f8fafc;
+  --link-color: #0ea5e9;
+  --color-primary: #0ea5e9;
+  --light-grey: #94a3b8;
+  --svg-color: #0f172a;
+}
+
+body {
+  font-family: var(--font-family);
+}
+
+.dark {
+  --default-font-color: #e2e8f0;
+  --background-color: #0f172a;
+  --link-color: #38bdf8;
+  --color-primary: #38bdf8;
+  --light-grey: #475569;
+  --svg-color: #e2e8f0;
+}
+
+svg {
+  fill: var(--svg-color);
+}
+
+a {
+  color: var(--link-color);
+  @apply cursor-pointer;
+}
+
+svg {
+  @apply dark:fill-white dark:stroke-white fill-slate-900 stroke-slate-900;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap; /* Prevents text wrapping */
+  border: 0;
+}

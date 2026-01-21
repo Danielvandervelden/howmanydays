@@ -20,20 +20,25 @@
   }
 
   /* Radio button toggle styling */
-  #mode-toggle-container label {
+  #mode-toggle-container label,
+  [role="radiogroup"] label {
     @apply flex items-center justify-center;
   }
 
   #mode-toggle-container input[type="radio"]:checked + span,
-  #mode-toggle-container input[type="radio"]:checked ~ span {
+  #mode-toggle-container input[type="radio"]:checked ~ span,
+  [role="radiogroup"] input[type="radio"]:checked + span,
+  [role="radiogroup"] input[type="radio"]:checked ~ span {
     @apply bg-sky-500 text-white border-sky-500 dark:bg-sky-400 dark:border-sky-400;
   }
 
-  #mode-toggle-container input[type="radio"]:checked ~ * {
+  #mode-toggle-container input[type="radio"]:checked ~ *,
+  [role="radiogroup"] input[type="radio"]:checked ~ * {
     @apply bg-sky-500 text-white border-sky-500 dark:bg-sky-400 dark:border-sky-400;
   }
 
-  #mode-toggle-container label:has(input[type="radio"]:checked) {
+  #mode-toggle-container label:has(input[type="radio"]:checked),
+  [role="radiogroup"] label:has(input[type="radio"]:checked) {
     @apply bg-sky-500 text-white border-sky-500 dark:bg-sky-400 dark:border-sky-400;
   }
 }

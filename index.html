@@ -264,8 +264,293 @@
         </div>
       </section>
     </main>
-		<dialog id="manage-quick-selects-dialog" class="w-full max-w-md">
-			
-		</dialog>
+    <div
+      id="backdrop"
+      class="fixed top-0 left-0 w-full h-full bg-slate-900/50 backdrop-blur-sm z-40"
+    ></div>
+    <dialog
+      id="manage-quick-selects-dialog"
+      class="block w-full max-w-2xl fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl p-0 border-none z-50 dark:bg-slate-800 max-h-[90vh] overflow-y-auto"
+    >
+      <div
+        class="sticky top-0 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 p-6 flex items-center justify-between z-10"
+      >
+        <h2 class="text-2xl font-bold text-slate-900 dark:text-slate-100">
+          Manage Quick Selects
+        </h2>
+        <button
+          id="close-manage-quick-selects-dialog"
+          class="btn-icon btn-icon-secondary"
+        >
+          <svg class="w-4 h-4">
+            <use href="/svg-icons.svg#close"></use>
+          </svg>
+        </button>
+      </div>
+
+      <div class="p-6 space-y-6">
+        <!-- Add New Quick Select Section -->
+        <div
+          class="bg-slate-50 dark:bg-slate-900 rounded-xl p-6 border border-slate-200 dark:border-slate-700"
+        >
+          <h3
+            class="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4"
+          >
+            Add New Quick Select
+          </h3>
+          <form id="add-quick-select-form">
+            <!-- Name Input -->
+            <div class="flex flex-wrap gap-4">
+              <div class="basis-[calc(50%-theme('gap.4'))] grow">
+                <label
+                  for="quick-select-name"
+                  class="text-sm font-semibold text-slate-700 dark:text-slate-200"
+                  >Name</label
+                >
+                <input
+                  type="text"
+                  id="quick-select-name"
+                  placeholder="e.g., Christmas, Birthday"
+                  required
+                  class="mt-1 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-200 focus:border-sky-300 bg-white dark:bg-slate-800 dark:border-slate-700 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:ring-sky-700 dark:focus:border-sky-600"
+                />
+              </div>
+
+              <!-- Date Type Toggle -->
+              <div
+                class="basis-[calc(50%-theme('gap.4'))] grow flex justify-center"
+              >
+                <div>
+                  <div class="flex items-center gap-2 mb-2">
+                    <label
+                      class="text-sm font-semibold text-slate-700 dark:text-slate-200"
+                      >Date Type</label
+                    >
+                    <div class="relative group">
+                      <svg class="w-4 h-4 text-slate-400 cursor-help">
+                        <use href="/svg-icons.svg#info"></use>
+                      </svg>
+                      <div
+                        class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 bg-slate-900 text-white text-xs rounded-lg p-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all pointer-events-none shadow-xl"
+                      >
+                        <strong>Relative:</strong> Recurring date without year
+                        (e.g., 25/12). Works with Until/Since modes to calculate
+                        next/last occurrence. <br /><br />
+                        <strong>Absolute:</strong> Specific date with year
+                        (e.g., 25/12/2025). Fixed point in time.
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="inline-flex gap-1 bg-slate-100 p-1 rounded-full dark:bg-slate-800"
+                    role="radiogroup"
+                  >
+                    <label
+                      class="btn-secondary px-6 cursor-pointer"
+                      for="date-type-relative"
+                    >
+                      <input
+                        type="radio"
+                        id="date-type-relative"
+                        name="date-type"
+                        value="relative"
+                        class="sr-only"
+                        checked
+                      />
+                      <span>Relative</span>
+                    </label>
+                    <label
+                      class="btn-secondary px-6 cursor-pointer"
+                      for="date-type-absolute"
+                    >
+                      <input
+                        type="radio"
+                        id="date-type-absolute"
+                        name="date-type"
+                        value="absolute"
+                        class="sr-only"
+                      />
+                      <span>Absolute</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Date Input (will change based on type) -->
+            <div class="flex flex-wrap gap-4">
+              <div
+                id="date-input-container"
+                class="basis-[calc(50%-theme('gap.4'))] grow"
+              >
+                <label
+                  for="quick-select-date"
+                  class="text-sm font-semibold text-slate-700 dark:text-slate-200"
+                  >Date (DD/MM)</label
+                >
+                <input
+                  type="text"
+                  id="quick-select-date"
+                  placeholder="25/12"
+                  pattern="\d{2}/\d{2}"
+                  required
+                  class="mt-1 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-200 focus:border-sky-300 bg-white dark:bg-slate-800 dark:border-slate-700 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:ring-sky-700 dark:focus:border-sky-600"
+                />
+              </div>
+
+              <!-- Submit Button -->
+              <div class="basis-[calc(50%-theme('gap.4'))] grow flex items-end">
+                <button type="submit" class="btn-primary w-full flex justify-center items-center h-[46px]">
+                  <svg class="w-4 h-4">
+                    <use href="/svg-icons.svg#plus"></use>
+                  </svg>
+                  Add Quick Select
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Existing Quick Selects Section -->
+        <div>
+          <h3
+            class="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4"
+          >
+            Your Quick Selects
+          </h3>
+          <div id="quick-selects-to-manage" class="space-y-2">
+            <!-- Placeholder Quick Select Items (to be used as template) -->
+            <div
+              class="flex items-center gap-3 bg-slate-50 dark:bg-slate-900 rounded-xl p-4 border border-slate-200 dark:border-slate-700 group hover:border-slate-300 dark:hover:border-slate-600 transition-all"
+              data-id="christmas"
+            >
+              <button
+                class="drag-handle cursor-move text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+              >
+                <svg class="w-5 h-5">
+                  <use href="/svg-icons.svg#reorder"></use>
+                </svg>
+              </button>
+              <div class="flex-1 min-w-0">
+                <div class="font-semibold text-slate-900 dark:text-slate-100">
+                  Christmas
+                </div>
+                <div
+                  class="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-2"
+                >
+                  <span>25/12</span>
+                  <span
+                    class="text-xs px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full dark:bg-emerald-900/30 dark:text-emerald-400"
+                    >Relative</span
+                  >
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <button
+                  class="edit-button btn-icon btn-icon-secondary opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <svg class="w-4 h-4">
+                    <use href="/svg-icons.svg#edit"></use>
+                  </svg>
+                </button>
+                <button
+                  class="delete-button btn-icon btn-icon-secondary opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <svg class="w-4 h-4">
+                    <use href="/svg-icons.svg#trash"></use>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div
+              class="flex items-center gap-3 bg-slate-50 dark:bg-slate-900 rounded-xl p-4 border border-slate-200 dark:border-slate-700 group hover:border-slate-300 dark:hover:border-slate-600 transition-all"
+              data-id="new-year"
+            >
+              <button
+                class="drag-handle cursor-move text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+              >
+                <svg class="w-5 h-5">
+                  <use href="/svg-icons.svg#reorder"></use>
+                </svg>
+              </button>
+              <div class="flex-1 min-w-0">
+                <div class="font-semibold text-slate-900 dark:text-slate-100">
+                  New Year
+                </div>
+                <div
+                  class="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-2"
+                >
+                  <span>01/01</span>
+                  <span
+                    class="text-xs px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full dark:bg-emerald-900/30 dark:text-emerald-400"
+                    >Relative</span
+                  >
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <button
+                  class="edit-button btn-icon btn-icon-secondary opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <svg class="w-4 h-4">
+                    <use href="/svg-icons.svg#edit"></use>
+                  </svg>
+                </button>
+                <button
+                  class="delete-button btn-icon btn-icon-secondary opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <svg class="w-4 h-4">
+                    <use href="/svg-icons.svg#trash"></use>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div
+              class="flex items-center gap-3 bg-slate-50 dark:bg-slate-900 rounded-xl p-4 border border-slate-200 dark:border-slate-700 group hover:border-slate-300 dark:hover:border-slate-600 transition-all"
+              data-id="launch-day"
+            >
+              <button
+                class="drag-handle cursor-move text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+              >
+                <svg class="w-5 h-5">
+                  <use href="/svg-icons.svg#reorder"></use>
+                </svg>
+              </button>
+              <div class="flex-1 min-w-0">
+                <div class="font-semibold text-slate-900 dark:text-slate-100">
+                  Launch Day
+                </div>
+                <div
+                  class="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-2"
+                >
+                  <span>15/03/2025</span>
+                  <span
+                    class="text-xs px-2 py-0.5 bg-sky-100 text-sky-700 rounded-full dark:bg-sky-900/30 dark:text-sky-400"
+                    >Absolute</span
+                  >
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <button
+                  class="edit-button btn-icon btn-icon-secondary opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <svg class="w-4 h-4">
+                    <use href="/svg-icons.svg#edit"></use>
+                  </svg>
+                </button>
+                <button
+                  class="delete-button btn-icon btn-icon-secondary opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <svg class="w-4 h-4">
+                    <use href="/svg-icons.svg#trash"></use>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </dialog>
   </body>
 </html>

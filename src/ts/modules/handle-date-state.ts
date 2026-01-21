@@ -19,13 +19,18 @@ export function handleDateState() {
     queryParamService.set.toDate(new Date().toISOString().split("T")[0]);
   }
 
-  const { fromDateInput, toDateInput } = getElements();
+  const { fromDateInput, toDateInput, fromTodayLink, toTodayLink } =
+    getElements();
 
   if (
     !(fromDateInput instanceof HTMLInputElement) ||
-    !(toDateInput instanceof HTMLInputElement)
+    !(toDateInput instanceof HTMLInputElement) ||
+    !(fromTodayLink instanceof HTMLAnchorElement) ||
+    !(toTodayLink instanceof HTMLAnchorElement)
   ) {
-    console.error("From date or to date input not found");
+    console.error(
+      "From date, to date input, from today link or to today link not found"
+    );
     return;
   }
 
@@ -36,6 +41,20 @@ export function handleDateState() {
     ? new Date(toDateQueryParam).toISOString().split("T")[0]
     : new Date().toISOString().split("T")[0];
 
+  fromTodayLink.addEventListener("click", (e) => {
+    e.preventDefault();
+    fromDateInput.value = dayjs().format("YYYY-MM-DD");
+    queryParamService.set.fromDate(fromDateInput.value);
+    events.emit(Events.FROM_DATE_CHANGED, { fromDate: fromDateInput.value });
+  });
+
+  toTodayLink.addEventListener("click", (e) => {
+    e.preventDefault();
+    toDateInput.value = dayjs().format("YYYY-MM-DD");
+    queryParamService.set.toDate(toDateInput.value);
+    events.emit(Events.TO_DATE_CHANGED, { toDate: toDateInput.value });
+  });
+
   fromDateInput.addEventListener("change", (e) => {
     if (!(e.target instanceof HTMLInputElement)) {
       console.error("From date input not found");
@@ -43,7 +62,9 @@ export function handleDateState() {
     }
 
     queryParamService.set.fromDate(e.target.value);
+    events.emit(Events.FROM_DATE_CHANGED, { fromDate: e.target.value });
   });
+
   toDateInput.addEventListener("change", (e) => {
     if (!(e.target instanceof HTMLInputElement)) {
       console.error("To date input not found");
@@ -51,6 +72,7 @@ export function handleDateState() {
     }
 
     queryParamService.set.toDate(e.target.value);
+    events.emit(Events.TO_DATE_CHANGED, { toDate: e.target.value });
   });
 
   events.on(Events.QUICK_SELECT_CLICKED, recalculateDates);

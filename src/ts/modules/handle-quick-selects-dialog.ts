@@ -287,14 +287,14 @@ function updateFormButtonText() {
                 svgIcon.querySelector("use")?.setAttribute("href", "/svg-icons.svg#save");
                 submitButton.appendChild(svgIcon);
             }
-            submitButton.appendChild(document.createTextNode("Update Quick Select"));
+            submitButton.appendChild(document.createTextNode("Update it!"));
         } else {
             submitButton.innerHTML = "";
             if (svgIcon) {
                 svgIcon.querySelector("use")?.setAttribute("href", "/svg-icons.svg#plus");
                 submitButton.appendChild(svgIcon);
             }
-            submitButton.appendChild(document.createTextNode("Add Quick Select"));
+            submitButton.appendChild(document.createTextNode("Add it!"));
         }
     }
 }

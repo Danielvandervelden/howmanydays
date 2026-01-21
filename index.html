@@ -331,11 +331,17 @@
                       >Date Type</label
                     >
                     <div class="relative group">
-                      <svg class="w-4 h-4 text-slate-400 cursor-help">
-                        <use href="/svg-icons.svg#info"></use>
-                      </svg>
+                      <button
+                        type="button"
+                        aria-label="Date type info"
+                        class="inline-flex items-center justify-center focus:outline-none"
+                      >
+                        <svg class="w-4 h-4 text-slate-400 cursor-help">
+                          <use href="/svg-icons.svg#info"></use>
+                        </svg>
+                      </button>
                       <div
-                        class="absolute z-10 bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 bg-slate-900 text-white text-xs rounded-lg p-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all pointer-events-none shadow-xl"
+                        class="absolute z-10 bottom-full -left-10 md:left-1/2 md:-translate-x-1/2 mb-2 w-64 bg-slate-900 text-white text-xs rounded-lg p-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition-all pointer-events-none shadow-xl"
                       >
                         <strong>Relative:</strong> Recurring date without year
                         (e.g., 25/12). Works with Until/Since modes to calculate
@@ -404,11 +410,11 @@
 
               <!-- Submit Button -->
               <div class="basis-[calc(50%-theme('gap.4'))] grow flex items-end">
-                <button type="submit" class="btn-primary w-full flex justify-center items-center h-[46px] text-sm md:text-base">
+                <button type="submit" class="btn-primary w-full flex justify-center items-center h-[46px]">
                   <svg class="w-4 h-4">
                     <use href="/svg-icons.svg#plus"></use>
                   </svg>
-                  Add Quick Select
+                  Add it!
                 </button>
               </div>
             </div>

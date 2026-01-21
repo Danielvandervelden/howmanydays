@@ -4,6 +4,10 @@ export function getElements() {
   const quickSelectsContainer = document.getElementById("quick-select-content");
   const fromTodayLink = document.getElementById("from-today-link");
   const toTodayLink = document.getElementById("to-today-link");
+  const modeToggleContainer = document.getElementById("mode-toggle-container");
+  const modeToggleInputs = modeToggleContainer?.querySelectorAll(
+    "input[type='radio']"
+  ) as NodeListOf<HTMLInputElement>;
 
   return {
     fromDateInput,
@@ -11,5 +15,7 @@ export function getElements() {
     quickSelectsContainer,
     fromTodayLink,
     toTodayLink,
+    modeToggleContainer,
+    modeToggleInputs,
   };
 }

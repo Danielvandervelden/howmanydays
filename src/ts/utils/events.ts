@@ -1,22 +1,22 @@
 import { EventData, Events } from "./interfaces";
 
-type EventCallback = (data: EventData[Events]) => void;
+type EventCallback<E extends Events = Events> = (data: EventData[E]) => void;
 
-const listeners = new Map<Events, Set<EventCallback>>();
+const listeners = new Map<Events, Set<EventCallback<any>>>();
 
 export const events = {
-  emit: (eventName: Events, data: EventData[Events]) => {
+  emit: <E extends Events>(eventName: E, data?: EventData[E]) => {
     const event = new CustomEvent(eventName, { detail: data });
     console.log(`[Events] Emitting ${eventName}`, data);
     document.dispatchEvent(event);
   },
-  on: (eventName: Events, callback: EventCallback) => {
+  on: <E extends Events>(eventName: E, callback: EventCallback<E>) => {
     console.log(`[Events] Registering listener for ${eventName}`);
     // Only set up the document listener once per event type
     if (!listeners.has(eventName)) {
       listeners.set(eventName, new Set());
       document.addEventListener(eventName, (event) => {
-        const customEvent = event as CustomEvent<EventData[Events]>;
+        const customEvent = event as CustomEvent<EventData[E]>;
         console.log(`[Events] Received ${eventName}`, customEvent.detail);
         const callbacks = listeners.get(eventName);
         if (callbacks) {
@@ -34,7 +34,7 @@ export const events = {
       callbacks.add(callback);
     }
   },
-  off: (eventName: Events, callback: EventCallback) => {
+  off: <E extends Events>(eventName: E, callback: EventCallback<E>) => {
     const callbacks = listeners.get(eventName);
     if (callbacks) {
       callbacks.delete(callback);

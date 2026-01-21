@@ -37,6 +37,13 @@ function calculateDaysResult() {
     resultsDiv.textContent = Math.abs(differenceInDays).toString();
   }
 
+  events.on(Events.QUICK_SELECT_REMOVED_FROM_URL, () => {
+    const quickSelectResultDiv = document.getElementById("quick-select-result");
+    if (quickSelectResultDiv) {
+      quickSelectResultDiv.textContent = "";
+    }
+  });
+
   const quickSelectResultDiv = document.getElementById("quick-select-result");
   const quickSelectsObject = localStorageService.get.quickSelects();
   const quickSelect = quickSelectsObject.find(
@@ -44,7 +51,6 @@ function calculateDaysResult() {
   );
 
   if (!quickSelect) {
-    console.error("Quick select not found");
     return;
   }
 

@@ -11,6 +11,48 @@ import { localStorageService } from "../utils/localStorage.service";
 import { queryParamService } from "../utils/queryParam.service";
 
 export function handleQuickSelects() {
+  renderQuickSelectButtons();
+
+  // Listen for quick select deletion
+  events.on(Events.QUICK_SELECT_DELETED, ({ id }) => {
+    const button = document.querySelector(
+      `.quick-select-button[data-id="${id}"]`
+    );
+    if (button) {
+      button.remove();
+    }
+  });
+
+  events.on(Events.QUICK_SELECT_REMOVED_FROM_URL, () => {
+    renderQuickSelectButtons(true);
+  });
+
+  // Listen for quick select addition
+  events.on(Events.QUICK_SELECT_ADDED, ({ quickSelect }) => {
+    const quickSelectsContainer = document.getElementById(
+      "quick-select-content"
+    );
+    if (!(quickSelectsContainer instanceof HTMLDivElement)) {
+      console.error("Quick select container not found");
+      return;
+    }
+
+    const button = createQuickSelectButton({
+      quickSelect,
+      isActive: false,
+    }) as HTMLButtonElement;
+
+    button.addEventListener("click", () => {
+      quickSelectButtonClickHandler(quickSelect.id);
+    });
+
+    quickSelectsContainer.appendChild(button);
+  });
+}
+
+function renderQuickSelectButtons(
+  renderWithoutActiveQuickSelect: boolean = false
+) {
   const { quickSelect: quickSelectQueryParam } = getQueryParams();
   let quickSelects = localStorageService.get.quickSelects();
 
@@ -26,10 +68,14 @@ export function handleQuickSelects() {
     return;
   }
 
+  quickSelectsContainer.innerHTML = "";
+
   quickSelects.forEach((quickSelect) => {
     const button = createQuickSelectButton({
       quickSelect,
-      isActive: quickSelect.id === quickSelectQueryParam,
+      isActive: renderWithoutActiveQuickSelect
+        ? false
+        : quickSelect.id === quickSelectQueryParam,
     }) as HTMLButtonElement;
 
     button.addEventListener("click", () => {

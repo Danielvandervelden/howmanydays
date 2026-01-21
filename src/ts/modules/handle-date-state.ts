@@ -46,6 +46,8 @@ export function handleDateState() {
     fromDateInput.value = dayjs().format("YYYY-MM-DD");
     queryParamService.set.fromDate(fromDateInput.value);
     events.emit(Events.FROM_DATE_CHANGED, { fromDate: fromDateInput.value });
+    events.emit(Events.ENABLE_MODE_CONTROLS, { shouldEnable: true });
+    queryParamService.remove.quickSelect();
   });
 
   toTodayLink.addEventListener("click", (e) => {
@@ -53,6 +55,21 @@ export function handleDateState() {
     toDateInput.value = dayjs().format("YYYY-MM-DD");
     queryParamService.set.toDate(toDateInput.value);
     events.emit(Events.TO_DATE_CHANGED, { toDate: toDateInput.value });
+    events.emit(Events.ENABLE_MODE_CONTROLS, { shouldEnable: true });
+    events.emit(Events.QUICK_SELECT_REMOVED_FROM_URL);
+    queryParamService.remove.quickSelect();
+  });
+
+  fromDateInput.addEventListener("click", () => {
+    events.emit(Events.ENABLE_MODE_CONTROLS, { shouldEnable: true });
+    events.emit(Events.QUICK_SELECT_REMOVED_FROM_URL);
+    queryParamService.remove.quickSelect();
+  });
+
+  toDateInput.addEventListener("click", () => {
+    events.emit(Events.ENABLE_MODE_CONTROLS, { shouldEnable: true });
+    events.emit(Events.QUICK_SELECT_REMOVED_FROM_URL);
+    queryParamService.remove.quickSelect();
   });
 
   fromDateInput.addEventListener("change", (e) => {
@@ -143,5 +160,8 @@ function recalculateDates() {
         queryParamService.set.toDate(toDateInput.value);
       }
     }
+  } else {
+    toDateInput.value = quickSelect.date;
+    queryParamService.set.toDate(toDateInput.value);
   }
 }

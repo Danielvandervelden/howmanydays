@@ -35,4 +35,38 @@ export const queryParamService = {
       window.history.pushState({}, "", newUrl);
     },
   },
+  remove: {
+    fromDate: () => {
+      const existingQueryParams = new URLSearchParams(window.location.search);
+      existingQueryParams.delete(QUERY_PARAMS.FROM_DATE);
+      const newUrl = `${
+        window.location.pathname
+      }?${existingQueryParams.toString()}`;
+      window.history.pushState({}, "", newUrl);
+    },
+    toDate: () => {
+      const existingQueryParams = new URLSearchParams(window.location.search);
+      existingQueryParams.delete(QUERY_PARAMS.TO_DATE);
+      const newUrl = `${
+        window.location.pathname
+      }?${existingQueryParams.toString()}`;
+      window.history.pushState({}, "", newUrl);
+    },
+    mode: () => {
+      const existingQueryParams = new URLSearchParams(window.location.search);
+      existingQueryParams.delete(QUERY_PARAMS.MODE);
+      const newUrl = `${
+        window.location.pathname
+      }?${existingQueryParams.toString()}`;
+      window.history.pushState({}, "", newUrl);
+    },
+    quickSelect: () => {
+      const existingQueryParams = new URLSearchParams(window.location.search);
+      existingQueryParams.delete(QUERY_PARAMS.QUICK_SELECT);
+      const newUrl = `${
+        window.location.pathname
+      }?${existingQueryParams.toString()}`;
+      window.history.pushState({}, "", newUrl);
+    },
+  },
 };

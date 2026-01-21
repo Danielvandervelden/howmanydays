@@ -48,6 +48,73 @@ export function handleQuickSelects() {
 
     quickSelectsContainer.appendChild(button);
   });
+
+  // Listen for quick select updates
+  events.on(Events.QUICK_SELECT_UPDATED, ({ oldId, quickSelect }) => {
+    const oldButton = document.querySelector(
+      `.quick-select-button[data-id="${oldId}"]`
+    );
+
+    if (oldButton) {
+      // If the ID changed, create a new button
+      if (oldId !== quickSelect.id) {
+        const quickSelectsContainer = document.getElementById(
+          "quick-select-content"
+        );
+        if (!(quickSelectsContainer instanceof HTMLDivElement)) {
+          console.error("Quick select container not found");
+          return;
+        }
+
+        const newButton = createQuickSelectButton({
+          quickSelect,
+          isActive: false,
+        }) as HTMLButtonElement;
+
+        newButton.addEventListener("click", () => {
+          quickSelectButtonClickHandler(quickSelect.id);
+        });
+
+        // Replace old button with new one
+        oldButton.replaceWith(newButton);
+      } else {
+        // If ID didn't change, just update the button text
+        const buttonText = oldButton.querySelector("span");
+        if (buttonText) {
+          buttonText.textContent = quickSelect.label;
+        }
+      }
+    }
+  });
+
+  // Listen for quick select reordering
+  events.on(Events.QUICK_SELECT_REORDERED, () => {
+    const { quickSelect: quickSelectQueryParam } = getQueryParams();
+    const quickSelectsContainer = document.getElementById(
+      "quick-select-content"
+    );
+    if (!(quickSelectsContainer instanceof HTMLDivElement)) {
+      console.error("Quick select container not found");
+      return;
+    }
+
+    // Clear and re-render all buttons in new order
+    quickSelectsContainer.innerHTML = "";
+    const quickSelects = localStorageService.get.quickSelects();
+
+    quickSelects.forEach((quickSelect) => {
+      const button = createQuickSelectButton({
+        quickSelect,
+        isActive: quickSelect.id === quickSelectQueryParam,
+      }) as HTMLButtonElement;
+
+      button.addEventListener("click", () => {
+        quickSelectButtonClickHandler(quickSelect.id);
+      });
+
+      quickSelectsContainer.appendChild(button);
+    });
+  });
 }
 
 function renderQuickSelectButtons(

@@ -5,6 +5,7 @@ export const QUERY_PARAMS = {
   TO_DATE: "toDate",
   MODE: "mode",
   QUICK_SELECT: "quickSelect",
+  EDIT: "edit",
 };
 
 export const LOCAL_STORAGE_KEYS = {

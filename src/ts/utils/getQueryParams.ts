@@ -8,11 +8,13 @@ export function getQueryParams() {
     | "since"
     | "until";
   const quickSelect = queryParams.get(QUERY_PARAMS.QUICK_SELECT);
+  const edit = queryParams.get(QUERY_PARAMS.EDIT);
 
   return {
     fromDate,
     toDate,
     mode,
     quickSelect,
+    edit,
   };
 }

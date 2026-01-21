@@ -1,6 +1,8 @@
 import { localStorageService } from "../utils/localStorage.service";
 import { QuickSelect, Events } from "../utils/interfaces";
 import { events } from "../utils/events";
+import { getQueryParams } from "../utils/getQueryParams";
+import { queryParamService } from "../utils/queryParam.service";
 
 export function handleQuickSelectsDialog() {
   const manageButton = document.querySelector(
@@ -25,7 +27,7 @@ export function handleQuickSelectsDialog() {
   manageButton.addEventListener("click", openDialog);
   closeButton.addEventListener("click", closeDialog);
   backdrop.addEventListener("click", closeDialog);
-  form.addEventListener("submit", handleAddQuickSelect);
+  form.addEventListener("submit", handleFormSubmit);
 
   // Handle date type toggle
   const dateTypeInputs = dialog.querySelectorAll('input[name="date-type"]');
@@ -55,6 +57,12 @@ function openDialog() {
   backdrop.classList.remove("opacity-0");
   dialog.classList.remove("opacity-0");
 
+  // Check if we're in edit mode
+  const { edit } = getQueryParams();
+  if (edit) {
+    populateFormForEdit(edit);
+  }
+
   // Render quick selects
   renderQuickSelects();
 }
@@ -70,6 +78,17 @@ function closeDialog() {
   // Fade out
   backdrop.classList.add("opacity-0");
   dialog.classList.add("opacity-0");
+
+  // Clear form and edit state
+  const form = document.getElementById(
+    "add-quick-select-form"
+  ) as HTMLFormElement;
+  if (form) {
+    form.reset();
+  }
+  clearError();
+  queryParamService.remove.edit();
+  updateFormButtonText();
 
   // Hide after transition
   setTimeout(() => {
@@ -92,7 +111,20 @@ function renderQuickSelects() {
     .map((qs) => createQuickSelectItem(qs))
     .join("");
 
-  // Attach event listeners to delete buttons
+  // Attach event listeners to edit and delete buttons
+  const editButtons = container.querySelectorAll(".edit-button");
+  editButtons.forEach((button) => {
+    button.addEventListener("click", (e) => {
+      const quickSelectElement = (e.currentTarget as HTMLElement).closest(
+        "[data-id]"
+      );
+      const id = quickSelectElement?.getAttribute("data-id");
+      if (id) {
+        handleEditQuickSelect(id);
+      }
+    });
+  });
+
   const deleteButtons = container.querySelectorAll(".delete-button");
   deleteButtons.forEach((button) => {
     button.addEventListener("click", (e) => {
@@ -105,6 +137,9 @@ function renderQuickSelects() {
       }
     });
   });
+
+  // Setup drag and drop for reordering
+  setupDragAndDrop(container);
 }
 
 function handleDateTypeChange(e: Event) {
@@ -178,10 +213,117 @@ function clearError() {
   }
 }
 
-function handleAddQuickSelect(e: Event) {
+function populateFormForEdit(id: string) {
+  const quickSelects = localStorageService.get.quickSelects();
+  const quickSelect = quickSelects.find((qs) => qs.id === id);
+
+  if (!quickSelect) {
+    console.error("Quick select not found for editing");
+    return;
+  }
+
+  const nameInput = document.getElementById(
+    "quick-select-name"
+  ) as HTMLInputElement;
+  const dateInput = document.getElementById(
+    "quick-select-date"
+  ) as HTMLInputElement;
+  const dateTypeRelative = document.getElementById(
+    "date-type-relative"
+  ) as HTMLInputElement;
+  const dateTypeAbsolute = document.getElementById(
+    "date-type-absolute"
+  ) as HTMLInputElement;
+
+  if (!nameInput || !dateInput || !dateTypeRelative || !dateTypeAbsolute) {
+    console.error("Form inputs not found");
+    return;
+  }
+
+  // Set name
+  nameInput.value = quickSelect.label;
+
+  // Set date type
+  if (quickSelect.type === "relative") {
+    dateTypeRelative.checked = true;
+    // Trigger change to update the date input
+    handleDateTypeChange({ target: dateTypeRelative } as any);
+    // Convert MM-DD to DD/MM for display
+    const [month, day] = quickSelect.date.split("-");
+    setTimeout(() => {
+      const dateInputUpdated = document.getElementById(
+        "quick-select-date"
+      ) as HTMLInputElement;
+      if (dateInputUpdated) {
+        dateInputUpdated.value = `${day}/${month}`;
+      }
+    }, 0);
+  } else {
+    dateTypeAbsolute.checked = true;
+    handleDateTypeChange({ target: dateTypeAbsolute } as any);
+    // Date is already in YYYY-MM-DD format
+    setTimeout(() => {
+      const dateInputUpdated = document.getElementById(
+        "quick-select-date"
+      ) as HTMLInputElement;
+      if (dateInputUpdated) {
+        dateInputUpdated.value = quickSelect.date;
+      }
+    }, 0);
+  }
+
+  updateFormButtonText();
+}
+
+function updateFormButtonText() {
+  const { edit } = getQueryParams();
+  const submitButton = document.querySelector(
+    "#add-quick-select-form button[type='submit']"
+  );
+
+  if (submitButton) {
+    const svgIcon = submitButton.querySelector("svg");
+    if (edit) {
+      submitButton.innerHTML = "";
+      if (svgIcon) {
+        svgIcon
+          .querySelector("use")
+          ?.setAttribute("href", "/svg-icons.svg#save");
+        submitButton.appendChild(svgIcon);
+      }
+      submitButton.appendChild(document.createTextNode("Update Quick Select"));
+    } else {
+      submitButton.innerHTML = "";
+      if (svgIcon) {
+        svgIcon
+          .querySelector("use")
+          ?.setAttribute("href", "/svg-icons.svg#plus");
+        submitButton.appendChild(svgIcon);
+      }
+      submitButton.appendChild(document.createTextNode("Add Quick Select"));
+    }
+  }
+}
+
+function handleEditQuickSelect(id: string) {
+  queryParamService.set.edit(id);
+  populateFormForEdit(id);
+}
+
+function handleFormSubmit(e: Event) {
   e.preventDefault();
   clearError();
 
+  const { edit } = getQueryParams();
+
+  if (edit) {
+    handleUpdateQuickSelect(e, edit);
+  } else {
+    handleAddQuickSelect(e);
+  }
+}
+
+function handleAddQuickSelect(e: Event) {
   const form = e.target as HTMLFormElement;
   const nameInput = form.querySelector(
     "#quick-select-name"
@@ -264,6 +406,96 @@ function handleAddQuickSelect(e: Event) {
   renderQuickSelects();
 }
 
+function handleUpdateQuickSelect(e: Event, oldId: string) {
+  const form = e.target as HTMLFormElement;
+  const nameInput = form.querySelector(
+    "#quick-select-name"
+  ) as HTMLInputElement;
+  const dateInput = form.querySelector(
+    "#quick-select-date"
+  ) as HTMLInputElement;
+  const dateTypeInput = form.querySelector(
+    'input[name="date-type"]:checked'
+  ) as HTMLInputElement;
+
+  if (!nameInput || !dateInput || !dateTypeInput) {
+    console.error("Form inputs not found");
+    return;
+  }
+
+  const label = nameInput.value.trim();
+  const date = dateInput.value.trim();
+  const type = dateTypeInput.value as "relative" | "absolute";
+
+  if (!label || !date) {
+    showError("Please fill in all fields");
+    return;
+  }
+
+  // Generate new ID from label
+  const newId = generateIdFromLabel(label);
+
+  if (!newId) {
+    showError("Please enter a valid name");
+    return;
+  }
+
+  // Check if new ID already exists (and is different from the old one)
+  const existingQuickSelects = localStorageService.get.quickSelects();
+  if (newId !== oldId && existingQuickSelects.some((qs) => qs.id === newId)) {
+    showError("A quick select with this name already exists");
+    return;
+  }
+
+  // Validate and format date
+  let formattedDate = date;
+  if (type === "relative") {
+    // Convert DD/MM to MM-DD
+    const match = date.match(/^(\d{2})\/(\d{2})$/);
+    if (!match) {
+      showError("Date must be in DD/MM format (e.g., 25/12)");
+      return;
+    }
+    const [, day, month] = match;
+    formattedDate = `${month}-${day}`;
+  } else {
+    // Date input already gives YYYY-MM-DD format
+    if (!date.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      showError("Invalid date format");
+      return;
+    }
+    formattedDate = date;
+  }
+
+  // Create updated quick select
+  const updatedQuickSelect: QuickSelect = {
+    id: newId,
+    label,
+    date: formattedDate,
+    type,
+  };
+
+  // Update in localStorage
+  const updatedQuickSelects = existingQuickSelects.map((qs) =>
+    qs.id === oldId ? updatedQuickSelect : qs
+  );
+  localStorageService.set.quickSelects(updatedQuickSelects);
+
+  // Emit event so the main app can update
+  events.emit(Events.QUICK_SELECT_UPDATED, {
+    oldId,
+    quickSelect: updatedQuickSelect,
+  });
+
+  // Clear form and edit state
+  form.reset();
+  queryParamService.remove.edit();
+  updateFormButtonText();
+
+  // Re-render the dialog
+  renderQuickSelects();
+}
+
 function handleDeleteQuickSelect(id: string) {
   if (!confirm("Are you sure you want to delete this quick select?")) {
     return;
@@ -277,6 +509,66 @@ function handleDeleteQuickSelect(id: string) {
 
   // Re-render the dialog
   renderQuickSelects();
+}
+
+function setupDragAndDrop(container: HTMLElement) {
+  const items = container.querySelectorAll("[data-id]");
+  let draggedElement: HTMLElement | null = null;
+
+  items.forEach((item) => {
+    const dragHandle = item.querySelector(".drag-handle");
+
+    if (!dragHandle) return;
+
+    dragHandle.addEventListener("mousedown", () => {
+      (item as HTMLElement).setAttribute("draggable", "true");
+    });
+
+    item.addEventListener("dragstart", (e) => {
+      draggedElement = item as HTMLElement;
+      draggedElement.classList.add("opacity-50");
+    });
+
+    item.addEventListener("dragend", () => {
+      if (draggedElement) {
+        draggedElement.classList.remove("opacity-50");
+        draggedElement.removeAttribute("draggable");
+        draggedElement = null;
+      }
+      saveNewOrder();
+    });
+
+    item.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      if (draggedElement && draggedElement !== item) {
+        const rect = (item as HTMLElement).getBoundingClientRect();
+        const midpoint = rect.top + rect.height / 2;
+        if ((e as DragEvent).clientY < midpoint) {
+          item.parentNode?.insertBefore(draggedElement, item);
+        } else {
+          item.parentNode?.insertBefore(draggedElement, item.nextSibling);
+        }
+      }
+    });
+  });
+}
+
+function saveNewOrder() {
+  const container = document.getElementById("quick-selects-to-manage");
+  if (!container) return;
+
+  const items = container.querySelectorAll("[data-id]");
+  const newOrder = Array.from(items).map((item) =>
+    item.getAttribute("data-id")
+  );
+
+  const quickSelects = localStorageService.get.quickSelects();
+  const reorderedQuickSelects = newOrder
+    .map((id) => quickSelects.find((qs) => qs.id === id))
+    .filter((qs): qs is QuickSelect => qs !== undefined);
+
+  localStorageService.set.quickSelects(reorderedQuickSelects);
+  events.emit(Events.QUICK_SELECT_REORDERED);
 }
 
 function createQuickSelectItem(quickSelect: QuickSelect): string {

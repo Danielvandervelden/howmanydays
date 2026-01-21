@@ -34,6 +34,14 @@ export const queryParamService = {
       }?${existingQueryParams.toString()}`;
       window.history.pushState({}, "", newUrl);
     },
+    edit: (id: string) => {
+      const existingQueryParams = new URLSearchParams(window.location.search);
+      existingQueryParams.set(QUERY_PARAMS.EDIT, id);
+      const newUrl = `${
+        window.location.pathname
+      }?${existingQueryParams.toString()}`;
+      window.history.pushState({}, "", newUrl);
+    },
   },
   remove: {
     fromDate: () => {
@@ -63,6 +71,14 @@ export const queryParamService = {
     quickSelect: () => {
       const existingQueryParams = new URLSearchParams(window.location.search);
       existingQueryParams.delete(QUERY_PARAMS.QUICK_SELECT);
+      const newUrl = `${
+        window.location.pathname
+      }?${existingQueryParams.toString()}`;
+      window.history.pushState({}, "", newUrl);
+    },
+    edit: () => {
+      const existingQueryParams = new URLSearchParams(window.location.search);
+      existingQueryParams.delete(QUERY_PARAMS.EDIT);
       const newUrl = `${
         window.location.pathname
       }?${existingQueryParams.toString()}`;

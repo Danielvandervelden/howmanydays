@@ -13,6 +13,8 @@ export enum Events {
   TO_DATE_CHANGED = "to-date-changed",
   QUICK_SELECT_DELETED = "quick-select-deleted",
   QUICK_SELECT_ADDED = "quick-select-added",
+  QUICK_SELECT_UPDATED = "quick-select-updated",
+  QUICK_SELECT_REORDERED = "quick-select-reordered",
   QUICK_SELECT_REMOVED_FROM_URL = "quick-select-removed-from-url",
 }
 
@@ -38,5 +40,10 @@ export interface EventData {
   [Events.QUICK_SELECT_ADDED]: {
     quickSelect: QuickSelect;
   };
+  [Events.QUICK_SELECT_UPDATED]: {
+    oldId: string;
+    quickSelect: QuickSelect;
+  };
+  [Events.QUICK_SELECT_REORDERED]: void;
   [Events.QUICK_SELECT_REMOVED_FROM_URL]: void;
 }
